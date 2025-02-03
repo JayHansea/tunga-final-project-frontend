@@ -1,5 +1,6 @@
 import { ENDPOINTS } from "~/constants/endpoints";
 import { request } from "./api";
+import { Comments } from "~/types/comment";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -8,9 +9,9 @@ class CommentService {
    * get all comments
    * @param {string} id
    * @param {string} token
-   * @returns response data;
+   * @returns Promise<Comments>;
    */
-  getAllComments(id: string, token: string) {
+  getAllComments(id: string, token: string): Promise<Comments> {
     return request(
       `${API_URL + ENDPOINTS.getAllComments + "/" + id}`,
       "GET",

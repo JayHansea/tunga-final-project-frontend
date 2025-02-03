@@ -1,6 +1,6 @@
 import { ENDPOINTS } from "~/constants/endpoints";
 import { request } from "./api";
-import { Post } from "~/types/post";
+import { Post, PostResponse } from "~/types/post";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,37 +42,40 @@ class PostService {
    * Create a new post
    * @param {Partial<Post>} data - The data for the new post
    * @param {string} token - Bearer token for authorization
-   * @returns Promise<Post>
+   * @returns Promise<PostResponse>
    */
-  async createPost(data: Partial<Post>, token: string): Promise<Post> {
+  async createPost(
+    data: Partial<Post>,
+    token: string | null
+  ): Promise<PostResponse> {
     const response = await request(
       `${API_URL + ENDPOINTS.createPost}`,
       "POST",
       data,
       `Bearer ${token}`
     );
-    return response as Post;
+    return response as PostResponse;
   }
 
   /**
    * Edit an existing post
    * @param {string} id - The ID of the post
-   * @param {Partial<Post>} data - The updated data for the post
+   * @param {Partial<PostResponse>} data - The updated data for the post
    * @param {string} token - Bearer token for authorization
-   * @returns Promise<Post>
+   * @returns Promise<PostResponse>
    */
   async editPost(
     id: string,
-    data: Partial<Post>,
+    data: Partial<PostResponse>,
     token: string
-  ): Promise<Post> {
+  ): Promise<PostResponse> {
     const response = await request(
       `${API_URL + ENDPOINTS.editPost}/${id}`,
       "PUT",
       data,
       `Bearer ${token}`
     );
-    return response as Post;
+    return response as PostResponse;
   }
 
   /**
@@ -85,7 +88,7 @@ class PostService {
     const response = await request(
       `${API_URL + ENDPOINTS.deletePost}/${id}`,
       "DELETE",
-      null,
+      {},
       `Bearer ${token}`
     );
     return response as { message: string };

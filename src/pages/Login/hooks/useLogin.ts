@@ -45,7 +45,6 @@ export const useLogin = () => {
       const response = await authServices.signinUser(userData);
 
       if (response) {
-        console.log(response);
         localStorage.setItem("authToken", JSON.stringify(response));
       }
 

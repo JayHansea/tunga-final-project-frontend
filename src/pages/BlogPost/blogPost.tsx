@@ -1,22 +1,54 @@
 "use client";
 
-import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { posts, comments, users } from "~/constants/data";
+import React from "react";
 import { Navbar } from "~/components/Navbar";
 import { formatDate } from "~/utils/helper";
+import { useBlogPost } from "./hooks/useBlogPost";
+import { FaSpinner } from "react-icons/fa6";
 
 const Blogpost = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false); // Track post dropdown state
-  const [commentDropdown, setCommentDropdown] = useState<string | null>(null); // Track comment dropdown state
-  const [allComments, setAllComments] = useState(
-    comments.map((comment) => ({ ...comment, editMode: false }))
-  ); // State for comments with editMode flag
+  const {
+    post,
+    comments,
+    loading,
+    pageLoading,
+    dropdownOpen,
+    togglePostDropdown,
+    handleEditPost,
+    handleDeletePost,
+    isModalOpen,
+    closeModal,
+    openModal,
+    isPostAuthor,
+    editingCommentId,
+    editedComment,
+    commentDropdownOpen,
+    setCommentDropdownOpen,
+    handleEditClick,
+    handleEditComment,
+    setEditedComment,
+    setEditingCommentId,
+    setDropDownMode,
+    dropDownMode,
+    setNewComment,
+    newComment,
+    handlePostComment,
+    posting,
+    handleDeleteComment,
+  } = useBlogPost();
 
-  const params = useParams();
-  const router = useRouter();
-  const id = params?.id as string;
-  const post = posts.find((p) => p.id === id);
+  if (pageLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div
+          className="animate-spin inline-block w-8 h-8 border-4 border-l-blue-300 rounded-full"
+          role="status"
+        >
+          <span className="visually"></span>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -29,112 +61,52 @@ const Blogpost = () => {
     );
   }
 
-  const postComments = allComments.filter(
-    (comment) => comment.postId.id === id
-  );
-
-  const togglePostDropdown = () => setDropdownOpen((prev) => !prev);
-
-  const toggleCommentDropdown = (commentId: string) => {
-    setCommentDropdown((prev) => (prev === commentId ? null : commentId));
-  };
-
-  const handleEditPost = () => {
-    router.push("/write");
-    setDropdownOpen(false);
-  };
-
-  const handleDeletePost = () => {
-    if (confirm("Are you sure you want to delete this post?")) {
-      alert(`Deleted post: ${post.title}`);
-    }
-    setDropdownOpen(false);
-  };
-
-  const handleEditComment = (commentId: string) => {
-    setAllComments((prev) =>
-      prev.map((comment) =>
-        comment.id === commentId ? { ...comment, editMode: true } : comment
-      )
-    );
-    setCommentDropdown(null);
-  };
-
-  const handleSaveComment = (commentId: string, updatedContent: string) => {
-    setAllComments((prev) =>
-      prev.map((comment) =>
-        comment.id === commentId
-          ? {
-              ...comment,
-              content: updatedContent,
-              editMode: false,
-              updatedAt: { date: new Date().toISOString() },
-            }
-          : comment
-      )
-    );
-  };
-
-  const handleCancelEdit = (commentId: string) => {
-    setAllComments((prev) =>
-      prev.map((comment) =>
-        comment.id === commentId ? { ...comment, editMode: false } : comment
-      )
-    );
-  };
-
-  const handleDeleteComment = (commentId: string) => {
-    if (confirm("Are you sure you want to delete this comment?")) {
-      setAllComments((prev) =>
-        prev.filter((comment) => comment.id !== commentId)
-      );
-    }
-    setCommentDropdown(null);
-  };
-
-  const findUserName = (userId: string) => {
-    const user = users.find((user) => user.id === userId);
-    return user ? user.name : "Unknown User";
-  };
-
   return (
     <>
       <Navbar />
       <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
         <div className="flex items-center justify-between text-sm mb-8 relative">
-          <time dateTime={post.createdAt.date} className="text-gray-500">
-            {formatDate(post.updatedAt.date)}
+          <time dateTime={post.createdAt} className="text-gray-500">
+            {formatDate(post.updatedAt)}
           </time>
-          <div className="relative">
-            <button
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
-              onClick={togglePostDropdown}
-            >
-              •••
-            </button>
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-10">
-                <ul className="py-1">
-                  <li>
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={handleEditPost}
-                    >
-                      Edit Post
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                      onClick={handleDeletePost}
-                    >
-                      Delete Post
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
+          {isPostAuthor && (
+            <div className="relative">
+              <button
+                className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                onClick={togglePostDropdown}
+              >
+                •••
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-10">
+                  <ul className="py-1">
+                    <li>
+                      <button
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => {
+                          handleEditPost();
+                          togglePostDropdown();
+                        }}
+                      >
+                        Edit Post
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        onClick={() => {
+                          openModal();
+                          togglePostDropdown();
+                        }}
+                      >
+                        Delete Post
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-center justify-start text-sm mb-8">
           <h3 className="text-3xl mb-4 font-semibold text-gray-900 text-center">
@@ -167,112 +139,150 @@ const Blogpost = () => {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto mt-12 p-6 bg-gray-50 shadow-md rounded-lg">
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 transition-discrete delay-700 duration-300 ease-in-out">
+            <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
+            <p>
+              Are you sure you want to delete this post? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end mt-4">
+              <button
+                className="mr-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                onClick={() => {
+                  handleDeletePost();
+                }}
+              >
+                {loading ? (
+                  <>
+                    <span>Deleting...</span>
+                    <FaSpinner className="animate-spin ml-2" />
+                  </>
+                ) : (
+                  <span>Delete</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-3xl mx-auto mt-12 mb-14 p-6 bg-gray-50 shadow-md rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Comments</h3>
         <div className="space-y-4">
-          {postComments.map((comment) => (
+          {comments?.map((comment) => (
             <div
-              key={comment.id}
+              key={comment._id}
               className="p-4 border rounded-md bg-white shadow-sm"
             >
               <div className="flex justify-between items-center">
-                {comment.editMode ? (
-                  <div className="flex w-full gap-2">
+                {editingCommentId === comment._id ? (
+                  <div className="flex w-full">
                     <div className="flex-1">
                       <textarea
-                        className="flex-grow w-full p-2 border border-gray-300 rounded-md resize-none"
-                        defaultValue={comment.content}
-                        onChange={(e) =>
-                          setAllComments((prev) =>
-                            prev.map((c) =>
-                              c.id === comment.id
-                                ? { ...c, content: e.target.value }
-                                : c
-                            )
-                          )
-                        }
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        value={editedComment}
+                        onChange={(e) => setEditedComment(e.target.value)}
                       />
                     </div>
-                    <div>
+                    <div className="">
                       <button
-                        className="bg-blue-500 text-white px-3 py-1 mr-2 rounded-md hover:bg-blue-600"
-                        onClick={() =>
-                          handleSaveComment(comment.id, comment.content)
-                        }
+                        className="bg-blue-500 text-white px-3 py-1 ml-3 mr-1 rounded-md hover:bg-blue-600"
+                        onClick={() => handleEditComment(comment._id)}
                       >
-                        Save
+                        {posting ? "Saving..." : "Save"}
                       </button>
                       <button
-                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-400"
-                        onClick={() => handleCancelEdit(comment.id)}
+                        className="bg-gray-300 text-gray-700 px-3 py-1 ml-1 mr-3 rounded-md hover:bg-gray-400"
+                        onClick={() => {
+                          setEditingCommentId("");
+                          setDropDownMode(false);
+                        }}
                       >
                         Cancel
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <p className="text-sm text-gray-700">
-                      <span className="font-bold">
-                        {findUserName(comment.userId.id)}:
-                      </span>{" "}
-                      {comment.content}
-                    </p>
-                    <div className="relative">
-                      <button
-                        className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                        onClick={() => toggleCommentDropdown(comment.id)}
-                      >
-                        •••
-                      </button>
-                      {commentDropdown === comment.id && (
-                        <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-10">
-                          <ul className="py-1">
-                            <li>
-                              <button
-                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => handleEditComment(comment.id)}
-                              >
-                                Edit Comment
-                              </button>
-                            </li>
-                            <li>
-                              <button
-                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                onClick={() => handleDeleteComment(comment.id)}
-                              >
-                                Delete Comment
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </>
+                  <p className="text-sm text-gray-700">{comment.content}</p>
                 )}
+
+                <div className="relative">
+                  <button
+                    className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    onClick={() => {
+                      setCommentDropdownOpen((prev) =>
+                        prev === comment._id ? null : comment._id
+                      );
+                      setDropDownMode(true);
+                    }}
+                  >
+                    •••
+                  </button>
+                  {dropDownMode === true &&
+                    commentDropdownOpen === comment._id && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-10">
+                        <ul className="py-1">
+                          <li>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                handleEditClick(comment._id, comment.content);
+                                setDropDownMode(false);
+                              }}
+                            >
+                              Edit Comment
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                              onClick={() => {
+                                handleDeleteComment(comment._id);
+                                setDropDownMode(false);
+                              }}
+                            >
+                              Delete Comment
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                </div>
               </div>
-              <time
-                className="block text-xs text-gray-500 mt-2"
-                dateTime={comment.updatedAt.date}
-              >
-                Posted on {formatDate(comment.updatedAt.date)}
+              <time className="block text-xs text-gray-500 mt-2">
+                Posted on {formatDate(comment.updatedAt)}
               </time>
             </div>
           ))}
-          <form className="mt-4">
-            <textarea
-              className="w-full p-3 border border-gray-300 rounded-md resize-none"
-              rows={4}
-              placeholder="Write your comment here..."
-            ></textarea>
-            <button
-              type="submit"
-              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            >
-              Post Comment
-            </button>
-          </form>
         </div>
+
+        <form className="mt-4">
+          <textarea
+            className="w-full p-3 border border-gray-300 rounded-md resize-none"
+            rows={4}
+            placeholder="Write your comment here..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          ></textarea>
+          <button
+            type="submit"
+            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            onClick={(e) => {
+              e.preventDefault();
+              handlePostComment();
+            }}
+          >
+            {posting ? "Posting Comment..." : "Post Comment"}
+          </button>
+        </form>
       </div>
     </>
   );

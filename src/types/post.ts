@@ -1,4 +1,4 @@
-export type Post = {
+export interface Post {
   _id: string;
   title: string;
   content: string;
@@ -11,4 +11,9 @@ export type Post = {
     name: string;
     email: string;
   };
-};
+}
+
+export interface PostResponse {
+  message: string;
+  post: Post;
+}

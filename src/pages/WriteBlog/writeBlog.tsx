@@ -1,54 +1,45 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
+import { Toaster } from "react-hot-toast";
 import { Navbar } from "~/components/Navbar";
 import RichEditor from "~/components/RichEditor/richEditor";
+import { useWriteBlog } from "./hooks/useWriteBlog";
 
 const WriteBlog = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState(""); // This will hold the editor's content
-  const [tags, setTags] = useState<string[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState("");
-  const [newCategory, setNewCategory] = useState("");
-
-  const addTag = () => {
-    if (newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
-      setNewTag("");
-    }
-  };
-
-  const addCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
-      setNewCategory("");
-    }
-  };
-
-  const handleRemoveTag = (index: number) => {
-    setTags(tags.filter((_, i) => i !== index));
-  };
-
-  const handleRemoveCategory = (index: number) => {
-    setCategories(categories.filter((_, i) => i !== index));
-  };
-
-  const handlePublish = () => {
-    const blogData = {
-      title,
-      content, // The content will now include the editor's data
-      tags,
-      categories,
-    };
-    console.log("Publishing blog:", blogData);
-    // TODO: Add logic to send `blogData` to the server
-  };
+  const {
+    error,
+    title,
+    setTitle,
+    setContent,
+    newTag,
+    setNewTag,
+    addTag,
+    tags,
+    handleRemoveTag,
+    newCategory,
+    setNewCategory,
+    addCategory,
+    categories,
+    handleRemoveCategory,
+    handlePublish,
+    loading,
+  } = useWriteBlog();
 
   return (
     <>
       <Navbar />
       <div className="container mx-auto py-8">
         <h1 className="text-2xl font-bold mb-8">Write a New Blog</h1>
+
+        {error && (
+          <div className="mb-4 text-red-600 bg-red-100 p-2 rounded-md">
+            {error}
+          </div>
+        )}
+
+        <h2 className="mt-5 text-center text-base leading-9 tracking-tight text-white">
+          <Toaster />
+        </h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2" htmlFor="title">
@@ -71,7 +62,6 @@ const WriteBlog = () => {
           <RichEditor setContent={setContent} />
         </div>
 
-        {/* Tags Section */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2" htmlFor="tags">
             Tags
@@ -112,7 +102,6 @@ const WriteBlog = () => {
           </div>
         </div>
 
-        {/* Categories Section */}
         <div className="mb-4">
           <label
             className="block text-sm font-medium mb-2"
@@ -156,13 +145,13 @@ const WriteBlog = () => {
           </div>
         </div>
 
-        {/* Publish Button */}
         <button
           type="button"
           className="bg-green-500 text-white px-6 py-2 rounded-md"
           onClick={handlePublish}
+          disabled={loading}
         >
-          Publish
+          {loading ? "Publishing..." : "Publish"}
         </button>
       </div>
     </>

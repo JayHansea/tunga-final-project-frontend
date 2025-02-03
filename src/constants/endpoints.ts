@@ -6,13 +6,13 @@ export const ENDPOINTS = {
   // Posts
   createPost: "/posts",
   getAllPosts: "/posts",
-  getPostById: "/posts/postId",
-  editPost: "/posts/postId",
-  deletePost: "/posts/postId",
+  getPostById: "/posts",
+  editPost: "/posts",
+  deletePost: "/posts",
 
   // Comments
-  createComment: "/comments/postId",
-  getAllComments: "/comments/postId",
-  editComment: "/comments/commentId",
-  deleteComment: "/comments/commentId",
+  createComment: "/comments",
+  getAllComments: "/comments",
+  editComment: "/comments",
+  deleteComment: "/comments",
 };

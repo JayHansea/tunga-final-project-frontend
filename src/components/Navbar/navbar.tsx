@@ -3,8 +3,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { useIsLoggedIn } from "~/shared/hooks/useIsLoggedIn";
 import { useLogout } from "~/shared/hooks/useLogout";
+import { getUserDataFromLocalStorage } from "~/utils/helper";
 
 export const Navbar = () => {
+  const userData = getUserDataFromLocalStorage();
   const { isLoggedIn } = useIsLoggedIn();
   const logout = useLogout();
   const [isOpen, setIsOpen] = useState(false);
@@ -45,6 +47,11 @@ export const Navbar = () => {
             <ul className="flex flex-col lg:flex-row items-center lg:space-x-2 mt-4 lg:mt-0">
               {isLoggedIn === undefined ? null : isLoggedIn ? (
                 <>
+                  <li className="text-white">{userData?.user.name}</li>
+                  <li className="text-white mb-4 lg:mb-0">
+                    {" "}
+                    {`(${userData?.user.role})`}
+                  </li>
                   {/* Make a Post Button */}
                   <li>
                     <Link
