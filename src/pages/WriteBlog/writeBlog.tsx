@@ -3,7 +3,7 @@ import React from "react";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "~/components/Navbar";
 import RichEditor from "~/components/RichEditor/richEditor";
-import { useWriteBlog } from "./hooks/useWriteBlog";
+import { useWriteBlog } from "~/hooks/WriteBlog/useWriteBlog";
 
 const WriteBlog = () => {
   const {
@@ -23,6 +23,7 @@ const WriteBlog = () => {
     handleRemoveCategory,
     handlePublish,
     loading,
+    content,
   } = useWriteBlog();
 
   return (
@@ -59,7 +60,7 @@ const WriteBlog = () => {
           <label className="block text-sm font-medium mb-2" htmlFor="content">
             Content
           </label>
-          <RichEditor setContent={setContent} />
+          <RichEditor content={content} setContent={setContent} />
         </div>
 
         <div className="mb-4">

@@ -1,12 +1,14 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import postService from "~/services/post.services";
 import { Post } from "~/types/post";
 import { getUserDataFromLocalStorage } from "~/utils/helper";
 
 export const useWriteBlog = () => {
+  const params = useParams();
   const router = useRouter();
+  const postId = params?.id as string;
   const userData = getUserDataFromLocalStorage();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -16,6 +18,33 @@ export const useWriteBlog = () => {
   const [newCategory, setNewCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState<boolean>(!!postId);
+
+  useEffect(() => {
+    if (!postId) return;
+
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        const postRes = await postService.getPostById(
+          postId,
+          userData?.token ?? ""
+        );
+
+        setTitle(postRes.title);
+        setContent(postRes.content);
+        setTags(postRes.tags);
+        setCategories(postRes.categories);
+        setIsEditMode(true);
+      } catch (err) {
+        setError((err as Error).message || "Error fetching post.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postId, userData?.token]);
 
   const addTag = () => {
     if (newTag && !tags.includes(newTag)) {
@@ -52,15 +81,27 @@ export const useWriteBlog = () => {
 
     try {
       const token = userData?.token ?? null;
-      const newPost = await postService.createPost(blogData, token);
+      let newPost;
 
-      toast.success("Post created successfully", {
-        style: {
-          backgroundColor: "#cef7ea",
-          color: "#306844",
-        },
-        duration: 3000,
-      });
+      if (isEditMode && postId) {
+        newPost = await postService.editPost(postId, blogData, token);
+        toast.success("Post edited successfully", {
+          style: {
+            backgroundColor: "#cef7ea",
+            color: "#306844",
+          },
+          duration: 3000,
+        });
+      } else {
+        newPost = await postService.createPost(blogData, token);
+        toast.success("Post created successfully", {
+          style: {
+            backgroundColor: "#cef7ea",
+            color: "#306844",
+          },
+          duration: 3000,
+        });
+      }
 
       setTitle("");
       setContent("");
@@ -114,5 +155,6 @@ export const useWriteBlog = () => {
     handleRemoveCategory,
     handlePublish,
     loading,
+    content,
   };
 };

@@ -6,7 +6,7 @@ const Homepage = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto">
+      <div className="container mx-auto pb-8">
         <Card />
       </div>
     </>

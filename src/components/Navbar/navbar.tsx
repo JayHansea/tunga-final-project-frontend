@@ -8,7 +8,7 @@ import { getUserDataFromLocalStorage } from "~/utils/helper";
 export const Navbar = () => {
   const userData = getUserDataFromLocalStorage();
   const { isLoggedIn } = useIsLoggedIn();
-  const logout = useLogout();
+  const { logout } = useLogout();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -52,15 +52,19 @@ export const Navbar = () => {
                     {" "}
                     {`(${userData?.user.role})`}
                   </li>
-                  {/* Make a Post Button */}
-                  <li>
-                    <Link
-                      href="/write"
-                      className="mb-4 bg-blue-800 text-white hover:bg-blue-700 rounded-md block lg:inline py-3 px-6"
-                    >
-                      Make a Post
-                    </Link>
-                  </li>
+                  {userData?.user.role === "Author" ||
+                  userData?.user.role === "Admin" ? (
+                    <li>
+                      <Link
+                        href="/write"
+                        className="mb-4 bg-blue-800 text-white hover:bg-blue-700 rounded-md block lg:inline py-3 px-6"
+                      >
+                        Make a Post
+                      </Link>
+                    </li>
+                  ) : (
+                    <div></div>
+                  )}
 
                   {/* Logout Button */}
                   <li>

@@ -3,7 +3,7 @@ import {
   initialValue,
   RegisterFormValuesProps,
   registerValidationSchema,
-} from "../register.constants";
+} from "~/constants/register.constants";
 import { SubmitHandler, useForm } from "react-hook-form";
 import authServices from "~/services/auth.services";
 import { yupResolver } from "@hookform/resolvers/yup";

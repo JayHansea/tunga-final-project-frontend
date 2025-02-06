@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa6";
 import { Toaster } from "react-hot-toast";
-import { useLogin } from "./hooks/useLogin";
+import { useLogin } from "~/hooks/Login/useLogin";
 import { Controller } from "react-hook-form";
 
 const Login = () => {

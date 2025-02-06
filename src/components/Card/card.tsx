@@ -2,14 +2,11 @@
 import React from "react";
 import { formatDate } from "~/utils/helper";
 import { useCard } from "./hooks/useCard";
-import { useIsLoggedIn } from "~/shared/hooks/useIsLoggedIn";
-import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import ReadOnlyContent from "../ReadOnlyContent/readOnlyContent";
 
 export const Card = () => {
-  const { posts, loading, error } = useCard();
-  const { isLoggedIn } = useIsLoggedIn();
-  const router = useRouter();
+  const { posts, loading, error, handlePostClick } = useCard();
 
   if (loading) {
     return (
@@ -32,23 +29,6 @@ export const Card = () => {
     );
   }
 
-  const handlePostClick = (postId: string) => {
-    if (isLoggedIn) {
-      router.push(`/blog-post/${postId}`);
-    } else {
-      toast.error("You have to be logged in first", {
-        style: {
-          backgroundColor: "#FFCBDD",
-          color: "#f00",
-        },
-        duration: 3000,
-      });
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
-    }
-  };
-
   return (
     <>
       <h2 className="mt-5 text-center text-base leading-9 tracking-tight text-white">
@@ -64,12 +44,17 @@ export const Card = () => {
               <time dateTime={post.updatedAt} className="text-gray-500">
                 {formatDate(post.updatedAt)}
               </time>
-              <a
-                href={"#"}
-                className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-              >
-                {post.categories}
-              </a>
+              <div>
+                {post.categories.map((category, index) => (
+                  <a
+                    key={index}
+                    href="#"
+                    className="relative z-10 mr-2 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+                  >
+                    {category}
+                  </a>
+                ))}
+              </div>
             </div>
             <div className="group relative">
               <h3 className="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
@@ -82,7 +67,7 @@ export const Card = () => {
                 </button>
               </h3>
               <p className="mt-5 line-clamp-3 text-sm/6 text-gray-600">
-                {post.content}
+                <ReadOnlyContent rawContent={post.content} />
               </p>
             </div>
             {/* <div className="relative mt-8 flex items-center gap-x-4">

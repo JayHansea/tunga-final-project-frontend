@@ -8,7 +8,7 @@ import {
   initialValue,
   LoginFormValuesProps,
   loginValidationSchema,
-} from "../login.constants";
+} from "~/constants/login.constants";
 
 export const useLogin = () => {
   const router = useRouter();

@@ -66,8 +66,8 @@ class PostService {
    */
   async editPost(
     id: string,
-    data: Partial<PostResponse>,
-    token: string
+    data: Partial<Post>,
+    token: string | null
   ): Promise<PostResponse> {
     const response = await request(
       `${API_URL + ENDPOINTS.editPost}/${id}`,

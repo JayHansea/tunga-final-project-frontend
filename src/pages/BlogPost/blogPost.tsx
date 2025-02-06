@@ -3,8 +3,9 @@
 import React from "react";
 import { Navbar } from "~/components/Navbar";
 import { formatDate } from "~/utils/helper";
-import { useBlogPost } from "./hooks/useBlogPost";
+import { useBlogPost } from "~/hooks/BlogPost/useBlogPost";
 import { FaSpinner } from "react-icons/fa6";
+import ReadOnlyContent from "~/components/ReadOnlyContent/readOnlyContent";
 
 const Blogpost = () => {
   const {
@@ -125,7 +126,7 @@ const Blogpost = () => {
           </div>
         </div>
         <p className="mt-6 text-lg text-gray-700 leading-relaxed">
-          {post.content}
+          <ReadOnlyContent rawContent={post.content} />
         </p>
         <div className="flex flex-wrap gap-2 mt-5">
           {post.tags.map((tag, index) => (

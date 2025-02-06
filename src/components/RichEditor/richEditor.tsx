@@ -1,6 +1,12 @@
 "use client";
-import React, { useState } from "react";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import React, { useEffect, useState } from "react";
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  convertToRaw,
+  convertFromRaw,
+} from "draft-js";
 import {
   Fa1,
   Fa2,
@@ -14,23 +20,30 @@ import {
 import "draft-js/dist/Draft.css";
 
 interface RichEditorProps {
-  setContent: (content: string) => void; // Callback to pass content to parent
+  content: string | null;
+  setContent: (content: string) => void;
 }
 
-const RichEditor: React.FC<RichEditorProps> = ({ setContent }) => {
+const RichEditor: React.FC<RichEditorProps> = ({ content, setContent }) => {
   const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
+    content
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(content))) // Load existing content
+      : EditorState.createEmpty()
   );
+
+  useEffect(() => {
+    if (content) {
+      setEditorState(
+        EditorState.createWithContent(convertFromRaw(JSON.parse(content)))
+      );
+    }
+  }, [content]);
 
   const handleEditorChange = (state: EditorState) => {
     setEditorState(state);
 
-    // Get plain text content
-    const contentState = state.getCurrentContent();
-    const plainText = contentState.getPlainText();
-
-    // Update the parent component with the new content
-    setContent(plainText);
+    const rawContent = convertToRaw(state.getCurrentContent());
+    setContent(JSON.stringify(rawContent));
   };
 
   const toggleInlineStyle = (style: string) => {
@@ -43,7 +56,6 @@ const RichEditor: React.FC<RichEditorProps> = ({ setContent }) => {
 
   return (
     <div>
-      {/* Toolbar */}
       <div className="toolbar flex gap-2 mb-4">
         <button
           onMouseDown={(e) => {
@@ -119,7 +131,6 @@ const RichEditor: React.FC<RichEditorProps> = ({ setContent }) => {
         </button>
       </div>
 
-      {/* Editor */}
       <div className="editor-container p-4 border border-gray-300 rounded">
         <Editor
           editorState={editorState}

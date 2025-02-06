@@ -33,6 +33,8 @@ export const useBlogPost = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  console.log(post);
+
   const handleEditClick = (commentId: string, text: string) => {
     setEditingCommentId(commentId);
     setEditedComment(text);
@@ -228,7 +230,9 @@ export const useBlogPost = () => {
   const togglePostDropdown = () => setDropdownOpen((prev) => !prev);
 
   const handleEditPost = () => {
-    router.push("/write");
+    const postId = params?.id as string;
+
+    router.push(`/write/${postId}`);
     setDropdownOpen(false);
   };
 

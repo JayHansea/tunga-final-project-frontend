@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa6";
 import { Toaster } from "react-hot-toast";
 import { Controller } from "react-hook-form";
-import { useRegister } from "./hooks/useRegister";
+import { useRegister } from "~/hooks/Register/useRegister";
 
 const Register = () => {
   const { loading, buttonDisabled, control, handleSubmit, errors, onSubmit } =

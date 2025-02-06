@@ -13,5 +13,22 @@ export const useLogout = () => {
     }
   };
 
-  return logout;
+  // const autoLogout = () => {
+  //   const storedAuth = localStorage.getItem("authToken");
+
+  //   if (storedAuth) {
+  //     const { token, expiry } = JSON.parse(storedAuth);
+
+  //     if (new Date().getTime() > expiry) {
+  //       localStorage.removeItem("authToken");
+  //       return null;
+  //     }
+
+  //     return token;
+  //   }
+
+  //   return null;
+  // };
+
+  return { logout };
 };
