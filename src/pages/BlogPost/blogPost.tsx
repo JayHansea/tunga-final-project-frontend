@@ -65,7 +65,7 @@ const Blogpost = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
+      <div className="max-w-3xl mx-4 lg:mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
         <div className="flex items-center justify-between text-sm mb-8 relative">
           <time dateTime={post.createdAt} className="text-gray-500">
             {formatDate(post.updatedAt)}
@@ -125,9 +125,9 @@ const Blogpost = () => {
             ))}
           </div>
         </div>
-        <p className="mt-6 text-lg text-gray-700 leading-relaxed">
+        <div className="mt-6 text-lg text-gray-700 leading-relaxed">
           <ReadOnlyContent rawContent={post.content} />
-        </p>
+        </div>
         <div className="flex flex-wrap gap-2 mt-5">
           {post.tags.map((tag, index) => (
             <span
@@ -141,7 +141,7 @@ const Blogpost = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 transition-discrete delay-700 duration-300 ease-in-out">
             <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
             <p>
@@ -175,7 +175,7 @@ const Blogpost = () => {
         </div>
       )}
 
-      <div className="max-w-3xl mx-auto mt-12 mb-14 p-6 bg-gray-50 shadow-md rounded-lg">
+      <div className="max-w-3xl mx-4 lg:mx-auto mt-12 mb-14 p-6 bg-gray-50 shadow-md rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Comments</h3>
         <div className="space-y-4">
           {comments?.map((comment) => (

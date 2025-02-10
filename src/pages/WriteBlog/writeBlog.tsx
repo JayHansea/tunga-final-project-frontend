@@ -29,7 +29,7 @@ const WriteBlog = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto py-8">
+      <div className="lg:container mx-4 lg:mx-auto py-8">
         <h1 className="text-2xl font-bold mb-8">Write a New Blog</h1>
 
         {error && (
@@ -75,6 +75,7 @@ const WriteBlog = () => {
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               placeholder="Add a tag"
+              // TODO: When the enter key is pressed, this addTag function should also be called
             />
             <button
               type="button"
@@ -118,6 +119,7 @@ const WriteBlog = () => {
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               placeholder="Add a category"
+              // TODO: When the enter key is pressed, this addCategory function should also be called
             />
             <button
               type="button"

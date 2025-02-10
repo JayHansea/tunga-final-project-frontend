@@ -34,7 +34,7 @@ export const Card = () => {
       <h2 className="mt-5 text-center text-base leading-9 tracking-tight text-white">
         <Toaster />
       </h2>
-      <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-y-8 gap-x-4 lg:pt-0 lg:mt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-y-8 gap-x-4 lg:pt-0 lg:mt-10 sm:mt-16 sm:pt-16 md:mt-4 md:pt-4 lg:mx-0 md:max-w-none lg:max-w-none md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
           <article
             key={post._id}
@@ -66,9 +66,9 @@ export const Card = () => {
                   {post.title}
                 </button>
               </h3>
-              <p className="mt-5 line-clamp-3 text-sm/6 text-gray-600">
+              <div className="mt-5 line-clamp-3 text-sm/6 text-gray-600">
                 <ReadOnlyContent rawContent={post.content} />
-              </p>
+              </div>
             </div>
             {/* <div className="relative mt-8 flex items-center gap-x-4">
             <img

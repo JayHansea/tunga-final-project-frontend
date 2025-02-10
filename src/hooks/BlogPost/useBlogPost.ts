@@ -33,8 +33,6 @@ export const useBlogPost = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  console.log(post);
-
   const handleEditClick = (commentId: string, text: string) => {
     setEditingCommentId(commentId);
     setEditedComment(text);
@@ -93,11 +91,10 @@ export const useBlogPost = () => {
     if (posting) return;
     try {
       setPosting(true);
-      console.log("triggered");
+
       const postId = params?.id as string;
       const comment = { content: newComment };
 
-      console.log(comment);
       await commentService.createComment(
         postId,
         comment,
@@ -207,7 +204,6 @@ export const useBlogPost = () => {
           (comment: Comment) => comment.postId === postRes._id
         );
 
-        console.log({ filteredComments });
         setComments(filteredComments);
       } catch (err) {
         setError((err as Error).message || "Error fetching post or comments.");
