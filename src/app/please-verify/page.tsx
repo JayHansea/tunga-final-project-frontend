@@ -1,22 +1,22 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import WriteBlog from "~/pages/WriteBlog/writeBlog";
+import Verification from "~/pages/VerificationPage/verificationPage";
 import { useIsLoggedIn } from "~/shared/hooks/useIsLoggedIn";
 
-export default function Write() {
+export default function PleaseVerifyPage() {
   const { isLoggedIn } = useIsLoggedIn();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace("/login");
+    if (isLoggedIn) {
+      router.replace("/");
     }
   }, [isLoggedIn, router]);
 
-  if (!isLoggedIn) {
+  if (isLoggedIn === undefined) {
     return null;
   }
 
-  return <WriteBlog />;
+  return <Verification />;
 }

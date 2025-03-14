@@ -48,7 +48,7 @@ export const useLogin = () => {
         localStorage.setItem("authToken", JSON.stringify(response));
       }
 
-      toast.success("SignUp successful", {
+      toast.success("Login successful", {
         style: {
           backgroundColor: "#cef7ea",
           color: "#306844",

@@ -1,17 +1,16 @@
 import { useRouter } from "next/navigation";
-import {
-  initialValue,
-  RegisterFormValuesProps,
-  registerValidationSchema,
-} from "~/constants/register.constants";
 import { SubmitHandler, useForm } from "react-hook-form";
 import authServices from "~/services/auth.services";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { UserData } from "~/types/auth";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import {
+  initialValue,
+  ForgotPasswordFormValuesProps,
+  forgotPasswordValidationSchema,
+} from "~/constants/forgotPassword.constants";
 
-export const useRegister = () => {
+export const useForgotPassword = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -20,38 +19,34 @@ export const useRegister = () => {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<RegisterFormValuesProps>({
-    resolver: yupResolver(registerValidationSchema),
+  } = useForm<ForgotPasswordFormValuesProps>({
+    resolver: yupResolver(forgotPasswordValidationSchema),
     defaultValues: initialValue,
   });
 
   const formValues = watch();
 
   useEffect(() => {
-    const { firstname, lastname, email, password, confirmPassword } =
-      formValues;
-    if (!firstname || !lastname || !email || !password || !confirmPassword) {
+    const { email } = formValues;
+    if (!email) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
     }
   }, [formValues]);
 
-  const onSubmit: SubmitHandler<RegisterFormValuesProps> = async (data) => {
+  const onSubmit: SubmitHandler<ForgotPasswordFormValuesProps> = async (
+    data
+  ) => {
     try {
       setLoading(true);
-      const userData: UserData = {
-        name: `${data.firstname} ${data.lastname}`,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-      };
-      const verifyData = {
+      const userData = {
         email: data.email,
       };
-      await authServices.createUser(userData);
-      await authServices.sendVerification(verifyData);
-      toast.success("SignUp successful", {
+
+      await authServices.forgotPassword(userData);
+
+      toast.success("Reset link sent to email", {
         style: {
           backgroundColor: "#cef7ea",
           color: "#306844",
@@ -60,7 +55,7 @@ export const useRegister = () => {
       });
       setTimeout(() => {
         setLoading(false);
-        router.push("/please-verify");
+        router.push("/");
       }, 3000);
     } catch (error: unknown) {
       if (error instanceof Error) {

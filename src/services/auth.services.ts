@@ -23,6 +23,42 @@ class AuthService {
     // Specify LoginResponse as the expected type
     return request<LoginResponse>(API_URL + ENDPOINTS.login, "POST", data, "");
   }
+
+  /**
+   *
+   * @param {Record<string, unknown>} data
+   * @returns promise
+   */
+  resetPassword(data: Record<string, unknown>) {
+    return request(API_URL + ENDPOINTS.resetPassword, "POST", data, "");
+  }
+
+  /**
+   *
+   * @param {Record<string, unknown>} data
+   * @returns promise
+   */
+  forgotPassword(data: Record<string, unknown>) {
+    return request(API_URL + ENDPOINTS.forgotPassword, "POST", data, "");
+  }
+
+  /**
+   *
+   * @param {Record<string, unknown>} data
+   * @returns promise
+   */
+  sendVerification(data: Record<string, unknown>) {
+    return request(API_URL + ENDPOINTS.sendVerification, "POST", data, "");
+  }
+
+  /**
+   *
+   * @param {Record<string, unknown>} data
+   * @returns promise
+   */
+  verifyEmail(data: Record<string, unknown>) {
+    return request(API_URL + ENDPOINTS.emailVerify, "POST", data, "");
+  }
 }
 
 export const authService = new AuthService();

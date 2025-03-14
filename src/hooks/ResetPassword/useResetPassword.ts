@@ -1,57 +1,61 @@
 import { useRouter } from "next/navigation";
-import {
-  initialValue,
-  RegisterFormValuesProps,
-  registerValidationSchema,
-} from "~/constants/register.constants";
 import { SubmitHandler, useForm } from "react-hook-form";
 import authServices from "~/services/auth.services";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { UserData } from "~/types/auth";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import {
+  initialValue,
+  ResetPasswordFormValuesProps,
+  resetPasswordValidationSchema,
+} from "~/constants/resetPassword.contants";
 
-export const useRegister = () => {
+export const useResetPassword = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [token, setToken] = useState("");
   const {
     control,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<RegisterFormValuesProps>({
-    resolver: yupResolver(registerValidationSchema),
+  } = useForm<ResetPasswordFormValuesProps>({
+    resolver: yupResolver(resetPasswordValidationSchema),
     defaultValues: initialValue,
   });
 
   const formValues = watch();
 
   useEffect(() => {
-    const { firstname, lastname, email, password, confirmPassword } =
-      formValues;
-    if (!firstname || !lastname || !email || !password || !confirmPassword) {
+    const { password, confirmPassword } = formValues;
+    if (!password || !confirmPassword) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
     }
   }, [formValues]);
 
-  const onSubmit: SubmitHandler<RegisterFormValuesProps> = async (data) => {
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const token = url.pathname.split("/").pop();
+    if (token) {
+      setToken(token);
+    }
+  }, []);
+
+  const onSubmit: SubmitHandler<ResetPasswordFormValuesProps> = async (
+    data
+  ) => {
     try {
       setLoading(true);
-      const userData: UserData = {
-        name: `${data.firstname} ${data.lastname}`,
-        email: data.email,
-        password: data.password,
-        role: data.role,
+      const userPassword = {
+        token,
+        newPassword: data.password,
       };
-      const verifyData = {
-        email: data.email,
-      };
-      await authServices.createUser(userData);
-      await authServices.sendVerification(verifyData);
-      toast.success("SignUp successful", {
+      await authServices.resetPassword(userPassword);
+
+      toast.success("Password reset successful", {
         style: {
           backgroundColor: "#cef7ea",
           color: "#306844",
@@ -60,7 +64,7 @@ export const useRegister = () => {
       });
       setTimeout(() => {
         setLoading(false);
-        router.push("/please-verify");
+        router.push("/login");
       }, 3000);
     } catch (error: unknown) {
       if (error instanceof Error) {

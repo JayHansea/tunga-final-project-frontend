@@ -1,15 +1,14 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa6";
+import React from "react";
+import { FaSpinner } from "react-icons/fa6";
 import { Toaster } from "react-hot-toast";
-import { useLogin } from "~/hooks/Login/useLogin";
+import { useForgotPassword } from "~/hooks/ForgotPassword/useForgotPassword";
 import { Controller } from "react-hook-form";
 
-const Login = () => {
+const ForgotPassword = () => {
   const { loading, buttonDisabled, control, handleSubmit, errors, onSubmit } =
-    useLogin();
-  const [showPassword, setShowPassword] = useState(false);
+    useForgotPassword();
 
   return (
     <div
@@ -27,7 +26,7 @@ const Login = () => {
           </Link>
         </h1>
         <h2 className="mt-8 text-center text-xl tracking-tight text-gray-500">
-          Sign in to your account
+          Password Recovery
         </h2>
         <h2 className="mt-5 text-center text-base leading-9 tracking-tight text-white">
           <Toaster />
@@ -63,52 +62,6 @@ const Login = () => {
                 )}
               </div>
             </div>
-            <div className="sm:col-span-2">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-500"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a
-                    href="/forgot-password"
-                    className="font-semibold text-indigo-600 hover:underline"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2 relative">
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({ field }) => (
-                    <input
-                      {...field}
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      autoComplete="current-password"
-                      required
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
-                    />
-                  )}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 flex items-center px-3 cursor-pointer stroke-cyan-500 hover:stroke-cyan-700"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-            </div>
           </div>
 
           <div>
@@ -122,28 +75,18 @@ const Login = () => {
             >
               {loading ? (
                 <>
-                  <span>Logging In...</span>
+                  <span>Processing...</span>
                   <FaSpinner className="animate-spin ml-2" />
                 </>
               ) : (
-                <span>Login</span>
+                <span>Submit</span>
               )}
             </button>
           </div>
         </form>
-
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Do not have an account?{" "}
-          <a
-            href="/register"
-            className="font-semibold leading-6 text-indigo-600 hover:underline"
-          >
-            Create an account
-          </a>
-        </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;
